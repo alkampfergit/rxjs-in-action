@@ -38,8 +38,10 @@ var _this = this;
 function delay(ms) {
     return new Promise(function (resolve) { return setTimeout(resolve, ms); });
 }
+var myadd = function (a, b) { return a + b; };
+var intermediate = 0;
 (function () { return __awaiter(_this, void 0, void 0, function () {
-    var Rx, source$, subscription, subscription2;
+    var Rx, source$, subscription;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -47,9 +49,9 @@ function delay(ms) {
                 Rx = require('rxjs');
                 source$ = Rx.Observable.create(function (o) {
                     var i = 1;
+                    console.log("Started setinterval");
                     setInterval(function () {
-                        if (o.destination._parent._subscriptions === null) {
-                            console.log('No more subscriber'); //wrong way
+                        if (i == 20 /*o.destination._parent._subscriptions === null*/) { //wrong way
                             o.complete();
                         }
                         else {
@@ -57,27 +59,24 @@ function delay(ms) {
                             o.next(i);
                         }
                     }, 500);
-                });
+                })
+                    .filter(function (val) { return val % 2 === 0; });
                 return [4 /*yield*/, delay(2000)];
             case 1:
                 _a.sent();
                 subscription = source$.subscribe(function (val) {
                     console.log("Received: ", val);
                 });
+                // const subscription2 = source$.subscribe(val => {
+                //     console.log("Received 2: ", val);
+                // });
                 return [4 /*yield*/, delay(4000)];
             case 2:
+                // const subscription2 = source$.subscribe(val => {
+                //     console.log("Received 2: ", val);
+                // });
                 _a.sent();
                 subscription.unsubscribe();
-                return [4 /*yield*/, delay(2000)];
-            case 3:
-                _a.sent();
-                subscription2 = source$.subscribe(function (val) {
-                    console.log("Received: ", val);
-                });
-                return [4 /*yield*/, delay(4000)];
-            case 4:
-                _a.sent();
-                subscription2.unsubscribe();
                 return [2 /*return*/];
         }
     });

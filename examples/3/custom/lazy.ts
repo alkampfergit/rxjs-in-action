@@ -2,24 +2,49 @@ function delay(ms: number) {
     return new Promise( resolve => setTimeout(resolve, ms) );
 }
 
+let finished = false;
+type Callback = (val: number) => void;
+
+class SequenceGenerator {
+
+    private current = 1;
+
+    constructor (
+        private callback: Callback, 
+        private numberOfGeneration: number) {
+
+        console.log("Created sequence generator")
+    }
+
+    private timeout: any;
+    public Start(interval: number) {
+        this.timeout = setInterval(() => {
+            if (--this.numberOfGeneration === 0)
+            {
+                this.Stop();
+                return;
+            }
+            this.callback(this.current++);
+            console.log('Callback called with value ' + this.current);
+        }, interval);
+    } 
+    public Stop() {
+        clearTimeout(this.timeout);
+    }
+}
+
 const myadd = (a: number, b: number) => a + b;
 let intermediate = 0;
+
 (async () => { 
     console.log('start');
-
     const Rx = require('rxjs');
     const source$ = Rx.Observable.create(o => {
-        let i = 1;
-        console.log("Started setinterval");
-        setInterval(() => {
-            if (i == 20 /*o.destination._parent._subscriptions === null*/) {  //wrong way
-                o.complete();
-            }
-            else {
-                console.log(`Generating sequence ${i++}`);
-                o.next(i);
-            }
-        }, 500);
+        console.log('Creating sequence generator')
+        const generator = new SequenceGenerator(
+            val => o.next(val),
+            15);
+        generator.Start(500);
     })
     .filter(val => val % 2 === 0)
     //.reduce(myadd, 0)
@@ -39,5 +64,7 @@ let intermediate = 0;
 
     await delay(4000);
 
+    console.log('Proceed to unsubscribe');
     subscription.unsubscribe(); 
+    finished = true; 
 })();

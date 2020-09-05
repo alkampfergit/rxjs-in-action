@@ -38,6 +38,30 @@ var _this = this;
 function delay(ms) {
     return new Promise(function (resolve) { return setTimeout(resolve, ms); });
 }
+var finished = false;
+var SequenceGenerator = /** @class */ (function () {
+    function SequenceGenerator(callback, numberOfGeneration) {
+        this.callback = callback;
+        this.numberOfGeneration = numberOfGeneration;
+        this.current = 1;
+        console.log("Created sequence generator");
+    }
+    SequenceGenerator.prototype.Start = function (interval) {
+        var _this = this;
+        this.timeout = setInterval(function () {
+            if (--_this.numberOfGeneration === 0) {
+                _this.Stop();
+                return;
+            }
+            _this.callback(_this.current++);
+            console.log('Callback called with value ' + _this.current);
+        }, interval);
+    };
+    SequenceGenerator.prototype.Stop = function () {
+        clearTimeout(this.timeout);
+    };
+    return SequenceGenerator;
+}());
 var myadd = function (a, b) { return a + b; };
 var intermediate = 0;
 (function () { return __awaiter(_this, void 0, void 0, function () {
@@ -48,17 +72,9 @@ var intermediate = 0;
                 console.log('start');
                 Rx = require('rxjs');
                 source$ = Rx.Observable.create(function (o) {
-                    var i = 1;
-                    console.log("Started setinterval");
-                    setInterval(function () {
-                        if (i == 20 /*o.destination._parent._subscriptions === null*/) { //wrong way
-                            o.complete();
-                        }
-                        else {
-                            console.log("Generating sequence " + i++);
-                            o.next(i);
-                        }
-                    }, 500);
+                    console.log('Creating sequence generator');
+                    var generator = new SequenceGenerator(function (val) { return o.next(val); }, 15);
+                    generator.Start(500);
                 })
                     .filter(function (val) { return val % 2 === 0; });
                 return [4 /*yield*/, delay(2000)];
@@ -76,7 +92,9 @@ var intermediate = 0;
                 //     console.log("Received 2: ", val);
                 // });
                 _a.sent();
+                console.log('Proceed to unsubscribe');
                 subscription.unsubscribe();
+                finished = true;
                 return [2 /*return*/];
         }
     });

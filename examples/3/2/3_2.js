@@ -4,10 +4,13 @@
  *  @author Paul Daniels
  *  @author Luis Atencio
  */
+const Rx = require('rxjs');
+
+
 const promise = new Promise((resolve, reject) => {  
     setTimeout(() => {
        resolve(42);
-    }, 10000);
+    }, 3000);
 });
 promise.then(val => {
    console.log(`In then(): ${val}`);

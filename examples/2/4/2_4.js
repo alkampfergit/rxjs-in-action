@@ -4,6 +4,7 @@
  *  @author Paul Daniels
  *  @author Luis Atencio
  */
+const Rx = require('rxjs');
 const progressBar$ = Rx.Observable.create(observer => {
    const OFFSET = 3000;
    const SPEED =  50;
@@ -24,7 +25,7 @@ const progressBar$ = Rx.Observable.create(observer => {
 //--------------------------------------------------//
 //                Usage                             //
 //--------------------------------------------------//
-window.onload = function() {
+
   const label = document.querySelector('#progress-indicator');
   progressBar$
     .subscribe(
@@ -32,4 +33,4 @@ window.onload = function() {
       error => console.log(error.message),
       () => label.textContent = 'Complete!'
     );
-};
+

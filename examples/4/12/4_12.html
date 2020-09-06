@@ -4,11 +4,22 @@
   <meta charset="UTF-8">
   <title>Listing 4.12</title>
   <script src="https://unpkg.com/@reactivex/rxjs@5.5.11/dist/global/Rx.js"></script>
+  <script src="4_12.js"></script>
 </head>
 <body>
   <label for="search">Search: </label><input type="text" id="search" autocomplete="off"/>
   <ul id="results">
     <!-- Dynamically filled -->
   </ul>
+
+  <script>
+    // self executing function here
+    (function() {
+       // your page initialization code here
+       // the DOM will be available here
+       console.log("Starting executor");
+       executor();
+    })();
+    </script>
 </body>
 </html>

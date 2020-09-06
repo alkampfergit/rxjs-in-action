@@ -56,6 +56,7 @@ var SequenceGenerator = /** @class */ (function () {
             _this.callback(_this.current++);
             console.log('Callback called with value ' + _this.current);
         }, interval);
+        return this.timeout;
     };
     SequenceGenerator.prototype.Stop = function () {
         clearTimeout(this.timeout);
@@ -74,7 +75,10 @@ var intermediate = 0;
                 source$ = Rx.Observable.create(function (o) {
                     console.log('Creating sequence generator');
                     var generator = new SequenceGenerator(function (val) { return o.next(val); }, 15);
-                    generator.Start(500);
+                    var timeout = generator.Start(500);
+                    // Return will return the callback called when the subscriber
+                    // unsubscribe from the observable, you can clear the timeout
+                    return function () { return clearInterval(timeout); };
                 })
                     .filter(function (val) { return val % 2 === 0; });
                 return [4 /*yield*/, delay(2000)];

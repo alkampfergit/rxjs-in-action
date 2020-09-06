@@ -16,8 +16,8 @@ class SequenceGenerator {
         console.log("Created sequence generator")
     }
 
-    private timeout: any;
-    public Start(interval: number) {
+    private timeout: NodeJS.Timeout;
+    public Start(interval: number): NodeJS.Timeout {
         this.timeout = setInterval(() => {
             if (--this.numberOfGeneration === 0)
             {
@@ -27,6 +27,7 @@ class SequenceGenerator {
             this.callback(this.current++);
             console.log('Callback called with value ' + this.current);
         }, interval);
+        return this.timeout;
     } 
     public Stop() {
         clearTimeout(this.timeout);
@@ -44,7 +45,11 @@ let intermediate = 0;
         const generator = new SequenceGenerator(
             val => o.next(val),
             15);
-        generator.Start(500);
+        const timeout = generator.Start(500);
+
+        // Return will return the callback called when the subscriber
+        // unsubscribe from the observable, you can clear the timeout
+        return () => clearInterval(timeout);
     })
     .filter(val => val % 2 === 0)
     //.reduce(myadd, 0)

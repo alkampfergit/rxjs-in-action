@@ -1,11 +1,15 @@
+const { toNamespacedPath } = require('path');
 /**
  *  RxJS in Action
  *  Listing 4.6
  *  @author Paul Daniels
  *  @author Luis Atencio
  */
-Rx.Observable.timer(1000)
-   .delay(2000)
+const Rx = require('rxjs');
+Rx.Observable.interval(1000)
    .timeInterval()
-   .map(int => Math.floor(int.interval / 1000))
-   .subscribe(seconds => console.log(`${seconds} seconds`));
+   .do(int => console.log(`generated ${int.interval} seconds`))
+   .delay(2000)
+
+   //.map(int => Math.floor(int.interval / 1000))
+   .subscribe(int => console.log(`received ${int.interval} seconds`));

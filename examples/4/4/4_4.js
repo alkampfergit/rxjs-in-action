@@ -21,11 +21,16 @@ const Money = function (currency, val) {
 const newRandomNumber = () => Math.floor(Math.random() * 100);
 
 const USDMoney = Money.bind(null, 'USD');
-
-Rx.Observable.interval(2000)
+const Rx = require('rxjs');
+Rx.Observable.interval(1000)
+  .timeInterval()
   .skip(1)
   .take(5)
-  .map(num => new USDMoney(newRandomNumber()))
+  .map(num => {
+    const money = new USDMoney(newRandomNumber());
+    console.log("num = ", num);
+    return money;
+  })
   // WARNING: NOT IN TEXT
   // Added to address #11 (https://github.com/RxJSInAction/rxjs-in-action/issues/11)
   .map(usd => usd.toString())

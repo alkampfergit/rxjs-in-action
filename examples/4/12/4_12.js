@@ -1,3 +1,4 @@
+const executor = function() {
 /**
  *  RxJS in Action
  *  Listing 4.12
@@ -16,7 +17,7 @@ let testData = [
 
 const searchBox = document.querySelector('#search'); //-> <input>
 const results = document.querySelector('#results');  //-> <ul>
-
+console.log('Search box', searchBox,results );
 const notEmpty = input => !!input && input.trim().length > 0;
 
 const sendRequest = function(arr, query) {
@@ -35,7 +36,8 @@ Rx.Observable.fromEvent(searchBox, 'keyup')
   .forEach(result => {
     clearResults(results);
     appendResults(result, results);
-  });
+  })
+  ;
 
 function clearResults(container) {
   while(container.childElementCount > 0) {
@@ -50,4 +52,5 @@ function appendResults(results, container) {
     li.appendChild(text);
     container.appendChild(li);
   }
+}
 }
